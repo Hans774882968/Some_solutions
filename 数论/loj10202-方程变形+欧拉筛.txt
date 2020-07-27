@@ -1,0 +1,54 @@
+我们先化方程，化简方向是乘式 = func(n!)，这样便于计算解的个数：
+(x + y) / (x * y) = n!
+x * y * (n!) * (n!) - x * n! - y * n! = 0
+x * y * (n!) * (n!) - x * n! - y * n! + (n!) ^ 2 = (n!) ^ 2
+(x - n!) * (y - n!) = (n!) ^ 2 
+故(x,y)个数 = (n!) ^ 2的因数个数。乘积的因数个数当然是用质因子分解那个“指数的公式”来求了。
+然后我们有一种巧妙的计数方法：不一次取完一个数的质因子，而是每次只取1个。这样对于有x个p的n0来说，n0会恰好被访问x次。
+最后是一个小优化：如果不用欧拉筛而是埃筛（质数倍数非质数），就不需要存素数了，当前算到一个素数就直接在线更新ans。
+
+不要走先嘛qwq代码后面良心提供测试数据~
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int SZ = 1e6 + 5;
+const LL MOD = 1e9 + 7;
+int n;
+bool vis[SZ];vector<int> primes;
+template<typename Type>inline void read(Type &xx){
+    Type f = 1;char ch;xx = 0;
+    for(ch = getchar();ch < '0' || ch > '9';ch = getchar()) if(ch == '-') f = -1;
+    for(;ch >= '0' && ch <= '9';ch = getchar()) xx = xx * 10 + ch - '0';
+    xx *= f;
+}
+void init_p(int lim){
+    vis[1] = true;
+    for(int i = 2;i <= lim;++i){
+        if(!vis[i]) primes.push_back(i);
+        for(auto p: primes){
+            if(lim / i < p) break;
+            vis[i * p] = true;
+            if(i % p == 0) break;
+        }
+    }
+}
+int main(int argc, char** argv) {
+    read(n);
+    init_p(n);
+    LL ans = 1;
+    for(auto p: primes){
+        int expcnt = 0;
+        for(LL pw = p;pw <= n;pw *= p)
+            expcnt += n / pw;
+        ans = ans * (expcnt << 1 | 1) % MOD;
+    }
+    printf("%lld\n",ans);
+    return 0;
+}
+
+1000000
+999999
+999997
+//992854523
+443746537
+109118890
