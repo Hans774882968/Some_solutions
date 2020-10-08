@@ -1,0 +1,22 @@
+abc
+aaabcbc
+abcde
+aaabcdeababcdecdebcdebcdexxx
+b
+bbb
+abc
+ab
+abcde
+xabcabcdedababcdecdeey
+//a xxx "" ab xy
+字符串匹配的部分，可以一直采用kmp的动态维护，或者到了相应位置后O(1)hash。但其实本题的关键是“栈的思想”。
+我一开始想打kmp，但是它困难的地方不在kmp本身，而在：怎么正确地找到断裂带的尽头。受到hash+栈那个做法的启发，我们考虑用
+一个和ans[]（ans就是hash做法里面那个栈）对应的p[]，ans[++al]=y[i]，则我们顺便把y[i]这个字符的位置i记下来，即p[al] = i。
+如此，当我们找到匹配成功的位置，就用p数组获得断裂带的位置，然后pre[断裂带位置] = 当前匹配的前缀长度j（kmp模板里面的变量），
+也就是我们要的”下一个正确的j“，即所需匹配起点。
+关键代码：
+if(j == l1){
+    al -= l1;//批量出栈
+    j = pre[p[al]];
+}
+注：本题也可当作kmp和hash的模板。
