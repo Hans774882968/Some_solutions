@@ -1,0 +1,18 @@
+1130
+1131
+1300
+//2 3 4（前几个满足的：13 130 1131 1300）
+题意：求含子串13且整除13的数的个数。
+经过实验发现：必须要4维，3维的话会得到错的答案。第2维是是否含1，第3维是是否已经包含过13，第4维是%13的结果。
+除了加了第4维以外，其他和hdu3555没什么区别。
+int dfs(int idx,int is1,int has13,int rem,bool isup){
+    if(idx == -1) return has13 && rem == 0;
+    if(!isup && ~dp[idx][is1][has13][rem]) return dp[idx][is1][has13][rem];
+    int up = isup ? d[idx] : 9;
+    int ans = 0;
+    rep(i,0,up){
+        ans += dfs(idx - 1,i == 1,has13 || (is1 && i == 3),(rem * 10 + i) % 13,isup && i == up);
+    }
+    if(!isup) dp[idx][is1][has13][rem] = ans;
+    return ans;
+}

@@ -1,0 +1,22 @@
+dp的第2维是“0比1多几个”。经过实验，第2维没有不行……
+然后就是要分是否已经至少1个1来把前导0的影响去掉：
+int dfs(int idx,int v,bool first1,bool isup){
+    if(idx == -1) return v >= 0;
+    if(!isup && first1 && ~dp[idx][ID(v)]) return dp[idx][ID(v)];
+    int up = isup ? d[idx] : 1;
+    int ans = 0;
+    rep(i,0,up){
+        if(i == 0){//这就是考虑去掉前导0影响的地方
+            ans += dfs(idx - 1,v + first1,first1,isup && i == up);
+        }
+        else ans += dfs(idx - 1,v - 1,true,isup && i == up);
+    }
+    if(!isup && first1) dp[idx][ID(v)] = ans;
+    return ans;
+}
+
+https://blog.csdn.net/bahuia/article/details/54407207
+题意：
+一个数x是round number，要求x写成二进制形式的时候数位上0的个数要大于等于1的个数，题目要求求出给定范围内的round number个数。
+思路：
+既然求的是二进制，那么自然要用二进制的数位dp来判断，模式基本不变，另外保存两个变量one，zero分别表示搜索中1和0出现的个数，另外还有一个flag变量清除前导零的影响。

@@ -1,0 +1,33 @@
+题意：区间内不含4和"62"的个数。
+位的高低定义为：个位为第1位。
+定义dp[i,j]表示目前正在决策第i+1位（i=0决策的是最低位，dfs到-1表示决策完毕），j=0表示0~10^(i+1)-1的范围内没有4的数字个数，
+j=1表示0~10^(i+1)-1的范围内没有4，上一位（指第i+2位）已经是6但这一位不是2的个数（注意，仅仅当前决策的这一位不能是2，
+后续所有位仍然可以是2）。
+如果!isup，dfs(i,j,isup)求的就是dp[i,j]，否则是符合题意范围的答案（不写入dp）。
+
+https://blog.csdn.net/dgq8211/article/details/9296953
+后来看我老乡博客学着用 dfs 写的，代码好清爽。
+dp[len][0 / 1] 表示不含 4 和 62的前提下，剩余长度为 len ，首位是否为 6 的个数。
+思路大概是依次把每位作为最高位，枚举这位可取的数字，决定后面需要的状态，相加，都不需要照着转移方程写了。
+
+下附做法2：
+设dp[i,j]表示需要决策后i位，当前位为j的不含4和62的个数。i表示范围0~10^i-1。打表：
+dp[0,0]=1;
+for(i,1,sz)
+    for(j,0,9)
+        for(k,0,9)
+            if(j!=4&&!(j == 6 && k == 2)) dp[i,j]+=dp[i-1,k];
+求答案就这样：
+int count(int n){
+	int ret = 0;
+	int len = getlen(n);
+	caldigit(n,len);
+	for(int i=len;i>=1;i--){//从高位向低位决策
+		for(int j=0;j<digits[i];j++){//j<digits[i],digits[i] is lower
+			if(!(j == 4) && !(digits[i+1] == 6 && j == 2)) ret += dp[i][j];
+		}
+        //剪枝
+		if(digits[i] == 4 || (digits[i+1] == 6 && digits[i] == 2)) break;//if digits[i] satisfy, then no ans later on ==> quicker
+	}
+	return ret;
+}

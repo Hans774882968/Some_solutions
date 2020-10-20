@@ -1,0 +1,20 @@
+题意：
+　　我们定义十进制数x的权值为f(x) = a(n)*2^(n-1)+a(n-1)*2(n-2)+...a(2)*2+a(1)*1，a(i)表示十进制数x中第i位的数字。
+　　题目给出a，b，求出0~b有多少个不大于f(a)的数。
+思路：
+定义个位为第1位。
+定义dp[i,j]表示当前决策到第i+1位，后续未决策位对f()值贡献应小于等于j的数字个数。还是老套路，i表示范围为0~10^(i+1)-1。isup作
+用一样是记录或不记录。通过惨痛教训知道递增的j会导致错误，所以采用的是上述递减决策的定义。其他的和hdu2089等题目的模板一样。
+int dfs(int idx,int v,bool isup){
+    if(idx == -1) return 1;
+    if(!isup && ~dp[idx][v]) return dp[idx][v];
+    int up = isup ? d[idx] : 9;
+    int ans = 0;
+    rep(i,0,up){
+        int nv = v - (1 << idx) * i;
+        if(nv < 0) continue;
+        ans += dfs(idx - 1,nv,isup && i == up);
+    }
+    if(!isup) dp[idx][v] = ans;
+    return ans;
+}

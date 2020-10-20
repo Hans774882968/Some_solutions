@@ -1,0 +1,47 @@
+模板还是和本文件夹其他文件一样一样的。
+dp的第2维是“平衡数”。题意要求有“至少1个平衡点”的数的个数。但是我们发现，平衡点最多只有1个，因为平衡点变，力臂就
+都变了。因此枚举每一个可能的平衡点，答案直接相加即可。平衡点下标0<=piv<dl，而平衡数计算公式为sum(i * (idx - piv))，i是每个
+idx所决策出的数，没必要对平衡数的计算分类讨论。
+贴代码：
+inline int ID(int v){return v + SZ0;}
+
+//non0：表示是否已经枚举过至少1个非0位。我们dfs模板有一个缺点就是前导0不好处理：为了去掉”不合法的piv位置“，使用if(piv > idx) return 0;
+LL dfs(int idx,int v,int piv,bool non0,bool isup){
+    if(v < 0) return 0;//剪枝：nv从0始先单增后单减，如果某时刻小于0肯定永远小于0。
+    if(idx == -1) return v == 0;
+    if(!isup && non0 && ~dp[idx][ID(v)]) return dp[idx][ID(v)];
+    int up = isup ? d[idx] : 9;
+    LL ans = 0;
+    rep(i,0,up){
+        int nv = v + i * (idx - piv);
+        if(i == 0){
+            ans += dfs(idx - 1,v,piv,non0,isup && i == up);
+        }
+        else{
+            if(!non0){
+                if(piv > idx) return 0;
+                ans += dfs(idx - 1,nv,piv,true,isup && i == up);
+            }
+            else ans += dfs(idx - 1,nv,piv,non0,isup && i == up);
+        }
+    }
+    if(!isup && non0) dp[idx][ID(v)] = ans;
+    return ans;
+}
+
+LL solve(LL x){
+    if(x < 0) return 0;
+    if(x == 0) return 1;
+    dl = 0;
+    for(;x;x /= 10) d[dl++] = x % 10;
+    LL ans = 0;
+    re_(piv,0,dl){
+        memset(dp,-1,sizeof dp);
+        ans += dfs(dl - 1,0,piv,false,true);
+    }
+    return ans;
+}
+那个dfs默认是当dl-1位数处理的，所以if(piv > idx) return 0;就是要把带前导0的piv非法的给去掉。然后non0这个bool变量的使用，和
+poj3252一样的：有前导0那些方案肯定不能写入dp。isup这个bool变量的作用和hdu2089等基础模板一样的。
+剪枝技巧就是函数从0开始单增然后单减，因此小于0方案数肯定是0。
+最后solve那里手动打了小补丁，x为0根本不进入dfs，所以直接返回1。

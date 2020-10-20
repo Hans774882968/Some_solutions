@@ -1,0 +1,15 @@
+2维dp，第2维是最近决策的数，只需观察上一位，需要去除前导0
+nzero用于去前导0，las是上一次决策的数位。
+int dfs(int idx,int las,bool nzero,bool isup){
+    if(idx == -1) return nzero;
+    if(!isup && nzero && ~dp[idx][las]) return dp[idx][las];
+    int up = isup ? d[idx] : 9;
+    int ans = 0;
+    rep(i,0,up){
+        if(nzero && abs(i - las) < 2) continue;
+        if(!i) ans += dfs(idx - 1,i,nzero,isup && i == up);
+        else ans += dfs(idx - 1,i,true,isup && i == up);
+    }
+    if(!isup && nzero) dp[idx][las] = ans;
+    return ans;
+}

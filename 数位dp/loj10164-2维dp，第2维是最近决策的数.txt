@@ -1,0 +1,18 @@
+1 20
+123 456
+1245 646578
+//18 107 4640
+
+bool ok(int x){
+    string s = to_string(x);
+    re_(i,0,s.size() - 1) if(s[i] > s[i+1]) return false;
+    return true;
+}
+
+int bf(int a,int b){
+    int ans = 0;
+    rep(i,a,b){
+        if(ok(i)) ++ans;
+    }
+    return ans;
+}

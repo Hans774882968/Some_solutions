@@ -1,0 +1,21 @@
+定义个位为第1位。
+dp[i,j,k]表示决策第i+1位，前1位是否为4，是否已经出现49。范围还是0~10^(i+1)-1。dfs递归到i=-1的时候就return k。其他的和模板
+一样了。
+LL dfs(int idx,int is4,int has49,bool isup){
+    if(idx == -1) return has49;
+    if(!isup && ~dp[idx][is4][has49]) return dp[idx][is4][has49];
+    int up = isup ? d[idx] : 9;
+    LL ans = 0;
+    rep(i,0,up){
+        ans += dfs(idx - 1,i == 4,has49 || (is4 && i == 9),isup && i == up);
+    }
+    if(!isup) dp[idx][is4][has49] = ans;
+    return ans;
+}
+
+LL solve(LL x){
+    dl = 0;
+    for(;x;x /= 10) d[dl++] = x % 10;
+    return dfs(dl - 1,0,0,true);
+}
+其实这题有一个(tot-没有49)的做法，转化为了和A题（hdu2089）一样的模板。但是这样做没意思了。

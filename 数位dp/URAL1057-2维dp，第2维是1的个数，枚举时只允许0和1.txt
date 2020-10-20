@@ -1,0 +1,13 @@
+这个和其他模板略有不同。第2维是1的个数，枚举时只允许0和1。
+int dfs(int idx,int v,bool isup){
+    if(idx == -1) return v == k;
+    if(!isup && ~dp[idx][v]) return dp[idx][v];
+    int up = isup ? d[idx] : B - 1;
+    int ans = 0;
+    rep(i,0,up){
+        if(i > 1) break;//枚举时只允许0和1
+        ans += dfs(idx - 1,v + (i == 1),isup && i == up);
+    }
+    if(!isup) dp[idx][v] = ans;
+    return ans;
+}
